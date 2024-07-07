@@ -16,8 +16,9 @@ Then after using command 'npm start' it will run the application.
 
 # Routes
 Websocket connection : 
-url : ws://localhost:3000?token=
-query paramters = 'token'
+url : ws://localhost:3000
+headers : 'token' is the keyName to pass the JWT token
+
 ------------------------------------
 
 Registration route : 
@@ -44,7 +45,7 @@ body : {
 
 follow someone : 
 method : post
-protected : true
+protected : true (token to be passed as bearer token)
 url : http://localhost:3000/followers
 body : {
     "followId":"39e5353d-6ad3-4f3d-842b-5ae016e60c0f"
@@ -54,14 +55,14 @@ body : {
 
 get followers :
 method : get
-protected : true
+protected : true (token to be passed as bearer token)
 url : http://localhost:3000/followers
 
 ----------------------------------------
 
 logout : 
 method : get
-protected : true
+protected : true (token to be passed as bearer token)
 url : http://localhost:3000/logout
 
 ----------------------------------------

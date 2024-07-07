@@ -3,12 +3,12 @@ const { sequelize } = require('./models');
 const { WebSocketServer, WebSocket } = require('ws');
 const url = require('url');
 const router = require('./routers/router');
-const { findFollowersId, addMessage } = require('./services/user.service');
+const { findFollowersId, addMessage, findUser } = require('./services/user.service');
 const { getUserToken } = require('./services/user_token.service');
 const { verify } = require('jsonwebtoken');
 
 const app = express();
-const port = 3000
+const port = process.env.PORT
 app.use(express.json());
 app.use('/', router);
 
@@ -23,8 +23,8 @@ const wss = new WebSocketServer({ server });
 wss.on("connection", async (ws, req) => {
 
     const parameters = url.parse(req.url, true);
-    const clientId = parameters.query.id;
-    const token = parameters.query.token;
+    //const token = parameters.query.token;
+    const token = req.headers['token']
     // Validating token
     verify(token, process.env.JWT_SECRET, async (err, decoded) => {
         if (err) {
@@ -44,11 +44,12 @@ wss.on("connection", async (ws, req) => {
                 return;
             }
             const arr = await findFollowersId(ws.id)
+            const user = await findUser(ws.id);
             //storing the message concurrently
             addMessage(ws.id, data.toString());
             wss.clients.forEach(async (client, id) => {
                 if (arr.includes(client.id) && client.readyState === WebSocket.OPEN) {
-                    client.send(data, { binary: isBinary });
+                    client.send(`New message from ${user.username} : ${data}`, { binary: isBinary });
                 }
             });
         })

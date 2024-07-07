@@ -92,6 +92,19 @@ module.exports = {
     addFollower: async(userId , requestBody) =>{
         try {
             const {followId} = requestBody;
+            const check = await user.findOne({
+                where : {
+                    id : followId
+                }
+            });
+            if(check == null) return 1;
+            const followerCheck = await followers.findOne({
+                where : {
+                    user_id : followId,
+                    follower_id : userId
+                }
+            });
+            if(followerCheck != null) return followerCheck
             const follower = await followers.create({
                 user_id : followId,
                 follower_id : userId

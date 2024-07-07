@@ -40,6 +40,12 @@ module.exports = {
                     message: 'Server error',
                     data: {}
                 })
+            }else if(result == "1"){
+                res.status(404).json({
+                    succeeded: false,
+                    message: 'User does not exist',
+                    data: {}
+                })
             }else{
                 res.status(200).json({
                     succeeded: false,
